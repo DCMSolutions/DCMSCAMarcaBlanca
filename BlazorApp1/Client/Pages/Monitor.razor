@@ -1,0 +1,193 @@
+﻿@page "/monitor/{dni:int}/{hasAccess:bool}"
+@page "/monitor/{hasAccess:bool}"
+@page "/monitor"
+@inject NavigationManager Navigation
+@inject IJSRuntime js
+
+<PageTitle>Acceso</PageTitle>
+<style>
+    body {
+        padding-top: 0px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .top-row {
+        display: none;
+    }
+
+    .form-control {
+        border: none;
+    }
+
+
+    .image-container {
+        position: relative; /* Establece el posicionamiento relativo para los contenedores hijos */
+        max-width: 100%; /* Asegura que el contenedor no exceda el ancho de la pantalla */
+        height: 100px; /* Establece la altura fija deseada para las imágenes */
+        overflow: hidden; /* Oculta cualquier parte de las imágenes que se extienda más allá de la altura especificada */
+        display: flex; /* Asegura que los contenedores internos se distribuyan en una fila */
+    }
+
+
+    .image-wrapper {
+        flex: 1; /* Permite que los contenedores internos ocupen el espacio disponible de manera equitativa */
+        height: 100%; /* Ajusta la altura al 100% del contenedor padre, manteniendo la proporción de la imagen */
+        overflow: hidden; /* Oculta cualquier parte de la imagen que se extienda más allá de la altura especificada */
+    }
+
+
+        .image-wrapper img {
+            max-width: 100%;
+            height: 100px;
+            object-fit: cover; /* Escala la imagen para que cubra toda el área del contenedor */
+        }
+
+</style>
+<div style="background-color:#ececec;"
+    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+            <tbody>
+                <tr>
+                    <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
+                                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width:600px;">
+                                                            <img alt="header image" height="auto" src="https://github.com/cesarriat/imagepublic/blob/main/thumbnail_email_header.png?raw=true" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+
+<center>
+            @if (dni != 0)
+            {
+                <h1>
+                    <b>  Acceso @((hasAccess ? "aprobado" : "denegado")). </b>
+                    <br />
+                    DNI: @dni
+                </h1>
+
+                @if (hasAccess)
+                {
+                            <img src="tick.png" style="height:225px;">
+                }
+                else
+                {
+                            <img src="cross.png" style="height:225px;">
+
+                }
+
+            }
+            else
+            {
+                @if (hasAccess)
+                {
+                            <h1><b>Acceso denegado.</b> Lectura inválida.</h1>
+                            <img src="cross.png" style="height:225px;">
+                }
+                else
+                {
+                            <h1>No hay conexión al servidor.</h1>
+                            <img src="no_connection.png" style="height:225px;">
+                }
+
+            }
+</center>
+    </div>
+    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+            <tbody>
+                <tr>
+                    <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
+                                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width:600px;">
+                                                            <img alt="header image" height="auto" src="https://github.com/cesarriat/imagepublic/blob/main/email_footer.png?raw=true" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="margin:0px auto;max-width:600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+            <tbody>
+                <tr>
+                    <td style="direction:ltr;font-size:0px;padding:20px 0px 20px 0px;text-align:center;">
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
+                                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:12px;line-height:16px;text-align:center;color:#00a650;">El carnet de socio y de DNI son de carácter intransferible</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
+                                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#999999;">Desarrollo al Servicio de la Secretaría de Deportes de <a class="text-link" href="https://www.vicentelopez.gov.ar/">Vicente López</a>.</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
+                                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#999999;"><a class="text-link" style="color:#999" href="https://www.vicentelopez.gov.ar/">&copy; Secretaría de Deportes</a></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int dni { get; set; }
+    [Parameter]
+    public bool hasAccess { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        if (hasAccess)
+        {
+            await js.InvokeVoidAsync("connected");
+            await js.InvokeVoidAsync("resize");
+        }
+    }
+}

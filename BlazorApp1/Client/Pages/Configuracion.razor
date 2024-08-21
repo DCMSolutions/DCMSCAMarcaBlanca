@@ -1,0 +1,64 @@
+﻿@page "/config"
+@inject NotificationService not
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<h1>Configuracion</h1>
+
+@if (config != null)
+{
+    <EditForm Model="@config" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <div style="display: flex; justify-content: right;">
+            <button type="submit" class="btn btn-outline-success" style="margin-left:1vw;" title="Guardar"><FeatherSave Color="green" /></button>
+        </div>
+
+        <div class="form-group">
+            <label><strong>TiempoDesconectado</strong></label>
+            <InputNumber @bind-Value="config.TiempoDesconectado" class="form-control form-control-user" placeholder="TiempoDesconectado" />
+            <ValidationMessage For="(()=> config.TiempoDesconectado)" style="color:red;" />
+        </div>
+
+        <div class="form-group">
+            <label><strong>Habilitado</strong></label>
+            <br />
+            <RadzenCheckBox @bind-Value=@config.HasMensajeDenegado Name="CheckHabilitado" />
+        </div>
+    </EditForm>
+}
+
+@code {
+    Config? config;
+
+    private HubConnection _hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        config = await http.GetFromJsonAsync<Config>("api/config");
+
+        string baseUrl = navigationManager.BaseUri;
+        string _hubUrl = baseUrl.TrimEnd('/') + "/notificationHub";
+
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(_hubUrl)
+            .Build();
+
+        _hubConnection.On<string>("COMChanges", (string a) =>
+        {
+            Console.WriteLine(a);
+        });
+
+        await _hubConnection.StartAsync();
+    }
+
+    async Task Save()
+    {
+        await http.PostAsJsonAsync("api/config", config);
+        Console.WriteLine("jeje");
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        not.Notify(message);
+    }
+}
