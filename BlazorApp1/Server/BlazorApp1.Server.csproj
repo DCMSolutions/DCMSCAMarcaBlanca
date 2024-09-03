@@ -11,11 +11,13 @@
   <ItemGroup>
     <None Remove="lastCOM.ans" />
     <None Remove="url.ans" />
+    <None Remove="config.ans" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="lastCOM.ans" />
     <Content Include="url.ans" />
+    <Content Include="config.ans" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,6 +15,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection.PortableExecutable;
 using System.Threading;
 using System;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using BlazorApp1.Shared.Model;
 
 namespace BlazorApp1.Server
 {
@@ -60,6 +64,7 @@ namespace BlazorApp1.Server
                     if (bytesRead == 0)
                     {
                         // La conexión se ha cerrado.
+                        Console.WriteLine("Cerrando conexion");
                         break;
                     }
 
@@ -101,12 +106,12 @@ namespace BlazorApp1.Server
                                 }
                                 if (intDNI == 0)
                                 {
-                                    await openChrome(0, true);
+                                    await openChrome(0, true, "");
 
                                 }
                                 else
                                 {
-                                    var response = await GetAccess(intDNI);
+                                    var response = await GetDniHabilitado(intDNI);
                                     EscribirTextoEnArchivo($"el intDNI: {intDNI}, la response: {response}");
                                     if (response.Success)
                                     {
@@ -119,11 +124,11 @@ namespace BlazorApp1.Server
                                             responseMessage = validationFail;
                                         }
 
-                                        await openChrome(intDNI, response.accesGranted);
+                                        await openChrome(intDNI, response.accesGranted, response.ErrorMessage);
                                     }
                                     else
                                     {
-                                        await openChrome(null, null);
+                                        await openChrome(null, null, null);
                                     }
                                     _hubContext.Clients.All.SendAsync("SendNotification", intDNI, response.accesGranted);
 
@@ -239,6 +244,7 @@ namespace BlazorApp1.Server
                 // Manejar el caso en que no se pueda convertir a int
             }
         }
+
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             // Coloca aquí el código que deseas ejecutar al iniciar la aplicación
@@ -247,10 +253,10 @@ namespace BlazorApp1.Server
             {
                 //if (_work == null)
                 //{
-                    EscribirTextoEnArchivo("La aplicación se ha iniciado");
-                    Console.WriteLine("La aplicación se ha iniciado");
-                    _work = new Thread(StartReading);
-                    _work.Start();
+                EscribirTextoEnArchivo("La aplicación se ha iniciado");
+                Console.WriteLine("La aplicación se ha iniciado");
+                _work = new Thread(StartReading);
+                _work.Start();
                 //}
             }
             catch (Exception ex)
@@ -259,6 +265,7 @@ namespace BlazorApp1.Server
 
             }
         }
+
         public async Task Start(string COM)
         {
             _COM = COM;
@@ -281,32 +288,6 @@ namespace BlazorApp1.Server
 
             await Task.CompletedTask;
         }
-
-
-        //public async void StartReading()
-        //{
-        //    int port = 4800;
-        //    //Console.WriteLine($"la ip es {ipAddress}");
-        //    TcpListener server = new TcpListener(IPAddress.Any, port);
-        //    server.Start();
-
-        //    Console.WriteLine($"Escuchando mensajes en el puerto {port}. Presiona Enter para detener...");
-        //    while (true)
-        //    {
-        //        Thread acceptThread = new Thread(() =>
-        //        {
-
-        //            TcpClient client = server.AcceptTcpClient();
-        //            Thread clientThread = new Thread(() =>
-        //            {
-        //                HandleClient(client);
-        //            });
-        //            clientThread.Start();
-
-        //        });
-        //    acceptThread.Start();
-        //    }
-        //}
 
         public async void StartReading()
         {
@@ -333,29 +314,60 @@ namespace BlazorApp1.Server
             }
         }
 
+        //async Task<Result<bool>> GetAccess(int intDocument)
+        //{
+        //    string fileName = Path.Combine(Directory.GetCurrentDirectory(), "url.ans");
+        //    string url;
+        //    if (!File.Exists(fileName))
+        //    {
+        //        url = "https://www.vicentelopez.gov.ar/mibarriogestion/deportesws/api/access?documentNumber=";
+        //        using (StreamWriter sw = File.CreateText(fileName))
+        //        {
+        //            sw.Write(url);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        url = File.ReadAllText(fileName);
+
+        //    }
+
+        //    string apiEndpoint = $"{url}" + intDocument;
 
 
+        //    if (intDocument == 43717944 || intDocument == 39489445 || intDocument == 16058146 || intDocument == 38177265 || intDocument == 43990922)
+        //    {
+        //        return new Result<bool> { Success = true, accesGranted = true };
+        //    }
+        //    if (intDocument == 37040385)
+        //    {
+        //        return new Result<bool> { Success = true, accesGranted = false };
+        //    }
 
-        async Task<Result<bool>> GetAccess(int intDocument)
+        //    try
+        //    {
+        //        HttpResponseMessage response = await _httpClient.GetAsync(apiEndpoint);
+        //        var a = response.StatusCode;
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            access responseData = await response.Content.ReadFromJsonAsync<access>();
+        //            return new Result<bool> { Success = true, accesGranted = responseData.accessGranted };
+        //        }
+        //        else
+        //        {
+        //            return new Result<bool> { Success = false, ErrorMessage = "API request failed" };
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new Result<bool> { Success = false, ErrorMessage = ex.Message };
+        //    }
+        //}
+
+        async Task<Result<bool>> GetDniHabilitado(int intDocument)
         {
-            string fileName = Path.Combine(Directory.GetCurrentDirectory(), "url.ans");
-            string url;
-            if (!File.Exists(fileName))
-            {
-                url = "https://www.vicentelopez.gov.ar/mibarriogestion/deportesws/api/access?documentNumber=";
-                using (StreamWriter sw = File.CreateText(fileName))
-                {
-                    sw.Write(url);
-                }
-            }
-            else
-            {
-                url = File.ReadAllText(fileName);
-
-            }
-
-            string apiEndpoint = $"{url}" + intDocument;
-
+            string url = GetURL();
+            string apiEndpoint = $"{url.TrimEnd('/')}/habilitado/" + intDocument;
 
             if (intDocument == 43717944 || intDocument == 39489445 || intDocument == 16058146 || intDocument == 38177265 || intDocument == 43990922)
             {
@@ -372,12 +384,12 @@ namespace BlazorApp1.Server
                 var a = response.StatusCode;
                 if (response.IsSuccessStatusCode)
                 {
-                    access responseData = await response.Content.ReadFromJsonAsync<access>();
-                    return new Result<bool> { Success = true, accesGranted = responseData.accessGranted };
+                    Dni responseData = await response.Content.ReadFromJsonAsync<Dni>();
+                    return new Result<bool> { Success = true, accesGranted = responseData.Habilitado == true, ErrorMessage = responseData.Mensaje };
                 }
                 else
                 {
-                    return new Result<bool> { Success = false, ErrorMessage = "API request failed" };
+                    return new Result<bool> { Success = false, ErrorMessage = "La consulta a la API falló" };
                 }
             }
             catch (Exception ex)
@@ -385,16 +397,24 @@ namespace BlazorApp1.Server
                 return new Result<bool> { Success = false, ErrorMessage = ex.Message };
             }
         }
-        async Task openChrome(int? dni, bool? accessGranted)
+
+        async Task openChrome(int? dni, bool? accessGranted, string? mensajeDenegado)
         {
             try
             {
                 EscribirTextoEnArchivo(dni.ToString());
                 var ip = GetLocalIPAddress();
-                int width = 500;
-                int height = 600;
-                string url = $"http://{ip}:5000/monitor/{dni}/{accessGranted}";
-                string chromeArguments = $" --app=\"data:text/html,<html><body><script>window.moveTo(580,240);window.resizeTo({width},{height});window.location='{url}';</script></body></html>\"";
+                Config config = GetConfig();
+
+
+                int width = (config.AnchoPestaña.HasValue && config.AnchoPestaña.Value != 0) ? config.AnchoPestaña.Value : 500;
+                int height = (config.AltoPestaña.HasValue && config.AltoPestaña.Value != 0) ? config.AltoPestaña.Value : 600;
+
+                int horizontal = (config.HorizontalPestaña.HasValue && config.HorizontalPestaña.Value != 0) ? config.HorizontalPestaña.Value : 580;
+                int vertical = (config.VerticalPestaña.HasValue && config.VerticalPestaña.Value != 0) ? config.VerticalPestaña.Value : 240;
+
+                string url = $"http://{ip}:5000/monitor/{dni}/{accessGranted}/{mensajeDenegado}";
+                string chromeArguments = $" --app=\"data:text/html,<html><body><script>window.moveTo({horizontal},{vertical});window.resizeTo({width},{height});window.location='{url}';</script></body></html>\"";
                 await Task.Run(() =>
                 {
                     Process.Start($"cmd", $"/c start chrome {chromeArguments} ");
@@ -407,6 +427,7 @@ namespace BlazorApp1.Server
             }
 
         }
+
         void EscribirTextoEnArchivo(string text)
         {
             // Ruta del archivo
@@ -420,6 +441,7 @@ namespace BlazorApp1.Server
             //    writer.WriteLine(text);
             //}
         }
+
         string GetLocalIPAddress()
         {
             string localIP = string.Empty;
@@ -437,18 +459,80 @@ namespace BlazorApp1.Server
             return localIP;
         }
 
+        Config GetConfig()
+        {
+            string fileName = Path.Combine(Directory.GetCurrentDirectory(), "config.ans");
 
+            if (!System.IO.File.Exists(fileName))
+            {
+                Config nuevaConf = new()
+                {
+                    COM = "COM38",
+                    HasMensajeDenegado = false,
+                    MensajeDenegadoDefault = "Lectura inválida.",
+                    MensajeDisconnect = "No hay conexión al servidor.",
+                    TiempoDesconectado = 5000,
+                    TiempoAceptado = 5000,
+                    TiempoDenegado = 5000,
+                    AltoPestaña = 600,
+                    AnchoPestaña = 500,
+                };
+                return nuevaConf;
+            }
+            else
+            {
+                string content = System.IO.File.ReadAllText(fileName);
+                Config? config = JsonSerializer.Deserialize<Config>(content);
+                return config;
+            }
+
+        }
+
+        public string GetURL()
+        {
+            string fileName = Path.Combine(Directory.GetCurrentDirectory(), "config.ans");
+            if (!System.IO.File.Exists(fileName))
+            {
+                return "";
+            }
+            else
+            {
+                string content = System.IO.File.ReadAllText(fileName);
+                Config? config = JsonSerializer.Deserialize<Config>(content);
+
+                if (config != null && config.URLActual != null && config.URLActual != "")
+                {
+                    return config.URLActual;
+                }
+                else if (config != null && config.URLDefault != null)
+                {
+                    return config.URLDefault;
+                }
+                return "";
+            }
+        }
     }
 
-    public class access
-    {
-        public bool accessGranted { get; set; }
-    }
     public class Result<T>
     {
         public bool Success { get; set; }
         public T accesGranted { get; set; }
         public string ErrorMessage { get; set; }
+    }
+    public class Dni
+    {
+        public int Id { get; set; }
+
+        public int? Numero { get; set; }
+
+        public string? Nombre { get; set; }
+
+        public string? Apellido { get; set; }
+
+        public bool? Habilitado { get; set; }
+
+        public string? Mensaje { get; set; }
+
     }
 }
 

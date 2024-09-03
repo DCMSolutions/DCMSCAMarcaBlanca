@@ -13,16 +13,14 @@ namespace BlazorApp1.Server.Hubs
         {
             _app = app;
         }
-
       
         public async Task SendNotification(int dni, bool hasAccess)
         {
             await Clients.All.SendAsync("SendNotification", dni, hasAccess);
         }
+
         public async Task COMChanges(string serialPort)
         {
-            Console.WriteLine("HOLA");
-
             await _app.StopAsync(cancellationToken:System.Threading.CancellationToken.None);
             await _app.Start(serialPort);
             

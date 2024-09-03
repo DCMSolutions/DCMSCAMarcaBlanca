@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Xml;
+using BlazorApp1.Shared.Model;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -22,8 +22,8 @@ namespace BlazorApp1.Server.Controllers
             {
                 if (!System.IO.File.Exists(fileName))
                 {
-                    CrearVacia();
-                    return new Config();
+                    Config conf = CrearNueva();
+                    return conf;
                 }
                 else
                 {
@@ -39,7 +39,7 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> EditConfig([FromBody]Config config)
+        public async Task<bool> EditConfig([FromBody] Config config)
         {
             try
             {
@@ -61,12 +61,26 @@ namespace BlazorApp1.Server.Controllers
             }
         }
 
-        void CrearVacia()
+        Config CrearNueva()
         {
-            Config nuevaConf = new();
+            Config nuevaConf = new()
+            {
+                COM = "COM38",
+                HasMensajeDenegado = false,
+                MensajeDenegadoDefault = "Lectura inválida.",
+                MensajeDisconnect = "No hay conexión al servidor.",
+                TiempoDesconectado = 5000,
+                TiempoAceptado = 5000,
+                TiempoDenegado = 5000,
+                AltoPestaña = 600,
+                AnchoPestaña = 500,
+            };
+
             string json = JsonSerializer.Serialize(nuevaConf, new JsonSerializerOptions { WriteIndented = true });
             using StreamWriter sw = System.IO.File.CreateText(fileName);
             sw.Write(json);
+
+            return nuevaConf;
         }
         void CrearConConfig(Config config)
         {

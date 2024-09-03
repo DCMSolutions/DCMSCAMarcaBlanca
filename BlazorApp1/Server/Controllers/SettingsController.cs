@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BlazorApp1.Shared.Model;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Text.Json;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,65 +14,52 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet]
         public string Get(string? url)
         {
-            if (url == null)
+            string fileName = Path.Combine(Directory.GetCurrentDirectory(), "config.ans");
+            if (!System.IO.File.Exists(fileName))
             {
-                string fileName = Path.Combine(Directory.GetCurrentDirectory(), "url.ans");
-
-                if (!System.IO.File.Exists(fileName))
-                {
-                    url = "https://www.vicentelopez.gov.ar/mibarriogestion/deportesws/api/access?documentNumber=";
-                    using (StreamWriter sw = System.IO.File.CreateText(fileName))
-                    {
-                        sw.Write(url);
-                    }
-                }
-                else
-                {
-                    url = System.IO.File.ReadAllText(fileName);
-
-                }
+                return "";
             }
             else
             {
-                Console.WriteLine(url);
-                string fileName = Path.Combine(Directory.GetCurrentDirectory(), "url.ans");
-                try
-                {
+                string content = System.IO.File.ReadAllText(fileName);
+                Config? config = JsonSerializer.Deserialize<Config>(content);
 
-                    using (StreamWriter sw = System.IO.File.CreateText(fileName))
-                    {
-                        sw.Write(url);
-                    }
-                }
-                catch (Exception ex)
+                if (config != null && config.URLActual != null && config.URLActual != "")
                 {
-                    Console.WriteLine("Error al leer el archivo url.ans: " + ex.Message);
+                    return config.URLActual;
                 }
+                else if (config != null && config.URLDefault != null)
+                {
+                    return config.URLDefault;
+                }
+                return "";
             }
-            return url;
         }
+
+
         [HttpGet("com")]
         public int GetCom()
         {
-            int com;
-            string fileName = Path.Combine(Directory.GetCurrentDirectory(), "lastCOM.ans");
-
+            string fileName = Path.Combine(Directory.GetCurrentDirectory(), "config.ans");
             if (!System.IO.File.Exists(fileName))
             {
-                using (StreamWriter sw = System.IO.File.CreateText(fileName))
-                {
-                    com = 0;
-                    sw.Write($"COM{com}");
-                }
+                return 38;
             }
             else
             {
-                string read = System.IO.File.ReadAllText(fileName);
-                string comPort = read.TrimStart("COM".ToCharArray());
-                com = (Convert.ToInt32(comPort));
+                string content = System.IO.File.ReadAllText(fileName);
+                Config? config = JsonSerializer.Deserialize<Config>(content);
+                if(config != null && config.COM.StartsWith("COM"))
+                {
+                    string numberPart = config.COM.Substring(3);
 
+                    if (int.TryParse(numberPart, out int result))
+                    {
+                        return result;
+                    }
+                }
+                return 38;
             }
-            return com;
         }
     }
 }

@@ -3,27 +3,145 @@
 @inject HttpClient http
 @inject NavigationManager navigationManager
 
-<h1>Configuracion</h1>
+<h1>Configuración</h1>
 
 @if (config != null)
 {
     <EditForm Model="@config" OnValidSubmit="Save">
         <DataAnnotationsValidator />
-        <div style="display: flex; justify-content: right;">
-            <button type="submit" class="btn btn-outline-success" style="margin-left:1vw;" title="Guardar"><FeatherSave Color="green" /></button>
-        </div>
 
-        <div class="form-group">
-            <label><strong>TiempoDesconectado</strong></label>
-            <InputNumber @bind-Value="config.TiempoDesconectado" class="form-control form-control-user" placeholder="TiempoDesconectado" />
-            <ValidationMessage For="(()=> config.TiempoDesconectado)" style="color:red;" />
-        </div>
+        <RadzenCard>
+            <RadzenRow RowGap="0">
+                <RadzenColumn SizeSM="4">
+                    <div class="form-group">
+                        <label><strong>Nombre de la empresa</strong></label>
+                        <InputText @bind-Value="config.Empresa" class="form-control form-control-user" placeholder="Empresa" />
+                        <ValidationMessage For="(()=> config.Empresa)" style="color:red;" />
+                    </div>
+                    
+                    <br />
 
-        <div class="form-group">
-            <label><strong>Habilitado</strong></label>
-            <br />
-            <RadzenCheckBox @bind-Value=@config.HasMensajeDenegado Name="CheckHabilitado" />
-        </div>
+                    <div class="form-group">
+                        <label><strong>Texto grande</strong></label>
+                        <InputText @bind-Value="config.Texto1" class="form-control form-control-user" placeholder="Texto 1" />
+                        <ValidationMessage For="(()=> config.Texto1)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Texto chico</strong></label>
+                        <InputText @bind-Value="config.Texto2" class="form-control form-control-user" placeholder="Texto 2" />
+                        <ValidationMessage For="(()=> config.Texto2)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Texto con hipervinculo</strong></label>
+                        <InputText @bind-Value="config.Texto3" class="form-control form-control-user" placeholder="Texto 3" />
+                        <ValidationMessage For="(()=> config.Texto3)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>URL de información de la empresa</strong></label>
+                        <InputText @bind-Value="config.EnlaceInfo" class="form-control form-control-user" placeholder="URL info" />
+                        <ValidationMessage For="(()=> config.EnlaceInfo)" style="color:red;" />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label><strong>URL de imagen de encabezado</strong></label>
+                        <InputText @bind-Value="config.URLImagenEncabezado" class="form-control form-control-user" placeholder="Imagen encabezado" />
+                        <ValidationMessage For="(()=> config.URLImagenEncabezado)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>URL de imagen de pie</strong></label>
+                        <InputText @bind-Value="config.URLImagenPie" class="form-control form-control-user" placeholder="Imagen pie" />
+                        <ValidationMessage For="(()=> config.URLImagenPie)" style="color:red;" />
+                    </div>
+
+                </RadzenColumn>
+                <RadzenColumn SizeSM="4">
+                    <div class="form-group">
+                        <label><strong>Duracion del cartel de acceso aceptado (en ms)</strong></label>
+                        <InputNumber @bind-Value="config.TiempoAceptado" class="form-control form-control-user" placeholder="Tiempo cartel aceptado" />
+                        <ValidationMessage For="(()=> config.TiempoAceptado)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Duracion del cartel de acceso denegado (en ms)</strong></label>
+                        <InputNumber @bind-Value="config.TiempoDenegado" class="form-control form-control-user" placeholder="Tiempo cartel denegado" />
+                        <ValidationMessage For="(()=> config.TiempoDenegado)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Duracion del cartel de falla de conexión (en ms)</strong></label>
+                        <InputNumber @bind-Value="config.TiempoDesconectado" class="form-control form-control-user" placeholder="Tiempo cartel desconectado" />
+                        <ValidationMessage For="(()=> config.TiempoDesconectado)" style="color:red;" />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label><strong>Alto de la pestaña de acceso</strong></label>
+                        <InputNumber @bind-Value="config.AltoPestaña" class="form-control form-control-user" placeholder="Alto pestaña" />
+                        <ValidationMessage For="(()=> config.AltoPestaña)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Ancho de la pestaña de acceso</strong></label>
+                        <InputNumber @bind-Value="config.AnchoPestaña" class="form-control form-control-user" placeholder="Ancho pestaña" />
+                        <ValidationMessage For="(()=> config.AnchoPestaña)" style="color:red;" />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label><strong>Posición horizontal de la pestaña de acceso</strong></label>
+                        <InputNumber @bind-Value="config.HorizontalPestaña" class="form-control form-control-user" placeholder="Horizontal pestaña" />
+                        <ValidationMessage For="(()=> config.HorizontalPestaña)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Posición vertical de la pestaña de acceso</strong></label>
+                        <InputNumber @bind-Value="config.VerticalPestaña" class="form-control form-control-user" placeholder="Vertical pestaña" />
+                        <ValidationMessage For="(()=> config.VerticalPestaña)" style="color:red;" />
+                    </div>
+
+
+
+                </RadzenColumn>
+                <RadzenColumn SizeSM="4">
+
+                    <div class="form-group">
+                        <label><strong>URL de servidor por defecto</strong></label>
+                        <InputText @bind-Value="config.URLDefault" class="form-control form-control-user" placeholder="URL default" />
+                        <ValidationMessage For="(()=> config.URLDefault)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>URL actual del servidor</strong></label>
+                        <InputText @bind-Value="config.URLActual" class="form-control form-control-user" placeholder="URL actual" />
+                        <ValidationMessage For="(()=> config.URLActual)" style="color:red;" />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label><strong>Puerto del lector QR</strong></label>
+                        <InputText @bind-Value="config.COM" class="form-control form-control-user" placeholder="COM" />
+                        <ValidationMessage For="(()=> config.COM)" style="color:red;" />
+                    </div>
+                    <br />
+
+                    <div class="form-group">
+                        <label><strong>El servidor cuenta con mensajes de razón de acceso denegado</strong></label>
+                        <br />
+                        <RadzenCheckBox @bind-Value=@config.HasMensajeDenegado Name="CheckHabilitado" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Mensaje por defecto de acceso denegado</strong></label>
+                        <InputText @bind-Value="config.MensajeDenegadoDefault" class="form-control form-control-user" placeholder="Mensaje denegado default" />
+                        <ValidationMessage For="(()=> config.MensajeDenegadoDefault)" style="color:red;" />
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Mensaje al dar error de conexión</strong></label>
+                        <InputText @bind-Value="config.MensajeDisconnect" class="form-control form-control-user" placeholder="Mensaje desconexión" />
+                        <ValidationMessage For="(()=> config.MensajeDisconnect)" style="color:red;" />
+                    </div>
+                    <br />
+
+                    <div style="display: flex; justify-content: right;">
+                        <button type="submit" class="btn btn-outline-success" style="margin-left:1vw;" title="Guardar"><FeatherSave Color="green" /></button>
+                    </div>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
+
+
+
     </EditForm>
 }
 
@@ -43,6 +161,7 @@
             .WithUrl(_hubUrl)
             .Build();
 
+
         _hubConnection.On<string>("COMChanges", (string a) =>
         {
             Console.WriteLine(a);
@@ -53,8 +172,23 @@
 
     async Task Save()
     {
-        await http.PostAsJsonAsync("api/config", config);
-        Console.WriteLine("jeje");
+        if (_hubConnection.State == HubConnectionState.Connected)
+        {
+            int viejoCom = await http.GetFromJsonAsync<int>("api/settings/com");
+            await http.PostAsJsonAsync("api/config", config);
+
+            if ($"COM{viejoCom}" != config.COM)
+            {
+                // await _hubConnection.SendAsync("COMChanges", config.COM);
+            }
+
+            ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Modificación exitosa.", Detail = "Se han guardado los cambios correctamente.", Duration = 4000 });
+
+        }
+        else
+        {
+            ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error de conexión", Detail = "La conexión no está activa.", Duration = 4000 });
+        }
     }
 
     void ShowNotification(NotificationMessage message)

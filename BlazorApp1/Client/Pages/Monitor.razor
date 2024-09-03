@@ -1,10 +1,13 @@
-﻿@page "/monitor/{dni:int}/{hasAccess:bool}"
+﻿@page "/monitor/{dni:int}/{hasAccess:bool}/{mensajeDenegado}"
+@page "/monitor/{dni:int}/{hasAccess:bool}"
 @page "/monitor/{hasAccess:bool}"
 @page "/monitor"
 @inject NavigationManager Navigation
+@inject HttpClient http
 @inject IJSRuntime js
 
 <PageTitle>Acceso</PageTitle>
+
 <style>
     body {
         padding-top: 0px;
@@ -22,6 +25,16 @@
         border: none;
     }
 
+    .loader {
+        border: 10px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid blue;
+        border-bottom: 8px solid blue;
+        width: 80px;
+        height: 80px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
 
     .image-container {
         position: relative; /* Establece el posicionamiento relativo para los contenedores hijos */
@@ -46,135 +59,166 @@
         }
 
 </style>
-<div style="background-color:#ececec;"
-    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
-            <tbody>
-                <tr>
-                    <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                                <tbody>
-                                    <tr>
-                                        <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
-                                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="width:600px;">
-                                                            <img alt="header image" height="auto" src="https://github.com/cesarriat/imagepublic/blob/main/thumbnail_email_header.png?raw=true" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
 
-<center>
-            @if (dni != 0)
-            {
-                <h1>
-                    <b>  Acceso @((hasAccess ? "aprobado" : "denegado")). </b>
-                    <br />
-                    DNI: @dni
-                </h1>
+@if (config != null)
+{
+    <div style="background-color:#ececec;">
+        <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+                <tbody>
+                    <tr>
+                        <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                            <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
+                                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:600px;">
+                                                                @if (config.URLImagenEncabezado != null)
+                                                                {
+                                                                    <img alt="header image" height="auto" src=@config.URLImagenEncabezado style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <img alt="header image" height="auto" src="https://github.com/cesarriat/imagepublic/blob/main/thumbnail_email_header.png?raw=true" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
 
-                @if (hasAccess)
+            <center>
+                @if (dni != 0)
                 {
-                            <img src="tick.png" style="height:225px;">
+                    <h1>
+                        <b>  Acceso @((hasAccess ? "aprobado" : "denegado")). </b>
+                        @if (!hasAccess && config.HasMensajeDenegado == true)
+                        {
+                            <a>@mensajeDenegado</a>
+                        }
+                        else if (!hasAccess)
+                        {
+                            <a>@config.MensajeDenegadoDefault</a>
+                        }
+
+
+                        <br />
+                        DNI: @dni
+                    </h1>
+
+                    @if (hasAccess)
+                    {
+                        <img src="tick.png" style="height:225px;">
+                    }
+                    else
+                    {
+                        <img src="cross.png" style="height:225px;">
+                    }
                 }
                 else
                 {
-                            <img src="cross.png" style="height:225px;">
-
+                    @if (hasAccess)
+                    {
+                        <h1><b>Acceso denegado.</b> Error de lectura.</h1>
+                        <img src="cross.png" style="height:225px;">
+                    }
+                    else
+                    {
+                        <h1>@config.MensajeDisconnect</h1>
+                        <img src="no_connection.png" style="height:225px;">
+                    }
                 }
-
-            }
-            else
-            {
-                @if (hasAccess)
-                {
-                            <h1><b>Acceso denegado.</b> Lectura inválida.</h1>
-                            <img src="cross.png" style="height:225px;">
-                }
-                else
-                {
-                            <h1>No hay conexión al servidor.</h1>
-                            <img src="no_connection.png" style="height:225px;">
-                }
-
-            }
-</center>
+            </center>
+        </div>
+        <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+                <tbody>
+                    <tr>
+                        <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                            <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
+                                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:600px;">
+                                                                @if (config.URLImagenPie != null)
+                                                                {
+                                                                    <img alt="header image" height="auto" src=@config.URLImagenPie style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <img alt="header image" height="auto" src="https://github.com/cesarriat/imagepublic/blob/main/email_footer.png?raw=true" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin:0px auto;max-width:600px;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+                <tbody>
+                    <tr>
+                        <td style="direction:ltr;font-size:0px;padding:20px 0px 20px 0px;text-align:center;">
+                            <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
+                                                <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:12px;line-height:16px;text-align:center;color:#00a650;">@config.Texto1</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
+                                                <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#999999;">@config.Texto2</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
+                                                <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#999999;"><a class="text-link" style="color:#999" href="@config.EnlaceInfo">@config.Texto3</a></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
-            <tbody>
-                <tr>
-                    <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                                <tbody>
-                                    <tr>
-                                        <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
-                                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="width:600px;">
-                                                            <img alt="header image" height="auto" src="https://github.com/cesarriat/imagepublic/blob/main/email_footer.png?raw=true" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="600" />
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div style="margin:0px auto;max-width:600px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-            <tbody>
-                <tr>
-                    <td style="direction:ltr;font-size:0px;padding:20px 0px 20px 0px;text-align:center;">
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                                <tbody>
-                                    <tr>
-                                        <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
-                                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:12px;line-height:16px;text-align:center;color:#00a650;">El carnet de socio y de DNI son de carácter intransferible</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
-                                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#999999;">Desarrollo al Servicio de la Secretaría de Deportes de <a class="text-link" href="https://www.vicentelopez.gov.ar/">Vicente López</a>.</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="center" style="font-size:0px;padding:5px 25px;word-break:break-word;">
-                                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#999999;"><a class="text-link" style="color:#999" href="https://www.vicentelopez.gov.ar/">&copy; Secretaría de Deportes</a></div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+}
+else
+{
+    <center>
+        <div class="loader"></div>
+    </center>
+}
 
 
 @code {
@@ -182,12 +226,32 @@
     public int dni { get; set; }
     [Parameter]
     public bool hasAccess { get; set; }
+    [Parameter]
+    public string? mensajeDenegado { get; set; }
+
+    Config? config;
+
     protected override async Task OnInitializedAsync()
     {
-        if (hasAccess)
+        config = await http.GetFromJsonAsync<Config>("api/config");
+        int time;
+        if (hasAccess && dni != 0 && config.TiempoAceptado != null)
         {
-            await js.InvokeVoidAsync("connected");
-            await js.InvokeVoidAsync("resize");
+            time = config.TiempoAceptado.Value;
         }
+        else if (!hasAccess && config.TiempoDenegado != null)
+        {
+            time = config.TiempoDenegado.Value;
+        }
+        else if (hasAccess && dni == 0 && config.TiempoDesconectado != null)
+        {
+            time = config.TiempoDesconectado.Value;
+        }
+        else
+        {
+            time = 5000;
+        }
+
+        await js.InvokeVoidAsync("connected", time);
     }
 }
