@@ -314,62 +314,12 @@ namespace BlazorApp1.Server
             }
         }
 
-        //async Task<Result<bool>> GetAccess(int intDocument)
-        //{
-        //    string fileName = Path.Combine(Directory.GetCurrentDirectory(), "url.ans");
-        //    string url;
-        //    if (!File.Exists(fileName))
-        //    {
-        //        url = "https://www.vicentelopez.gov.ar/mibarriogestion/deportesws/api/access?documentNumber=";
-        //        using (StreamWriter sw = File.CreateText(fileName))
-        //        {
-        //            sw.Write(url);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        url = File.ReadAllText(fileName);
-
-        //    }
-
-        //    string apiEndpoint = $"{url}" + intDocument;
-
-
-        //    if (intDocument == 43717944 || intDocument == 39489445 || intDocument == 16058146 || intDocument == 38177265 || intDocument == 43990922)
-        //    {
-        //        return new Result<bool> { Success = true, accesGranted = true };
-        //    }
-        //    if (intDocument == 37040385)
-        //    {
-        //        return new Result<bool> { Success = true, accesGranted = false };
-        //    }
-
-        //    try
-        //    {
-        //        HttpResponseMessage response = await _httpClient.GetAsync(apiEndpoint);
-        //        var a = response.StatusCode;
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            access responseData = await response.Content.ReadFromJsonAsync<access>();
-        //            return new Result<bool> { Success = true, accesGranted = responseData.accessGranted };
-        //        }
-        //        else
-        //        {
-        //            return new Result<bool> { Success = false, ErrorMessage = "API request failed" };
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new Result<bool> { Success = false, ErrorMessage = ex.Message };
-        //    }
-        //}
-
         async Task<Result<bool>> GetDniHabilitado(int intDocument)
         {
             string url = GetURL();
-            string apiEndpoint = $"{url.TrimEnd('/')}/habilitado/" + intDocument;
+            string apiEndpoint = $"{url.TrimEnd('/')}/" + intDocument;
 
-            if (intDocument == 43717944 || intDocument == 39489445 || intDocument == 16058146 || intDocument == 38177265 || intDocument == 43990922)
+            if (intDocument == 43717944 || intDocument == 39489445 || intDocument == 16058146 || intDocument == 38177265 /*|| intDocument == 43990922*/)
             {
                 return new Result<bool> { Success = true, accesGranted = true };
             }

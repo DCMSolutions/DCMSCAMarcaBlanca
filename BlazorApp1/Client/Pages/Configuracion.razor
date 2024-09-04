@@ -56,17 +56,17 @@
                 </RadzenColumn>
                 <RadzenColumn SizeSM="4">
                     <div class="form-group">
-                        <label><strong>Duracion del cartel de acceso aceptado (en ms)</strong></label>
+                        <label><strong>Duración del cartel de acceso aceptado</strong></label>
                         <InputNumber @bind-Value="config.TiempoAceptado" class="form-control form-control-user" placeholder="Tiempo cartel aceptado" />
                         <ValidationMessage For="(()=> config.TiempoAceptado)" style="color:red;" />
                     </div>
                     <div class="form-group">
-                        <label><strong>Duracion del cartel de acceso denegado (en ms)</strong></label>
+                        <label><strong>Duración del cartel de acceso denegado</strong></label>
                         <InputNumber @bind-Value="config.TiempoDenegado" class="form-control form-control-user" placeholder="Tiempo cartel denegado" />
                         <ValidationMessage For="(()=> config.TiempoDenegado)" style="color:red;" />
                     </div>
                     <div class="form-group">
-                        <label><strong>Duracion del cartel de falla de conexión (en ms)</strong></label>
+                        <label><strong>Duración del cartel de falla de conexión</strong></label>
                         <InputNumber @bind-Value="config.TiempoDesconectado" class="form-control form-control-user" placeholder="Tiempo cartel desconectado" />
                         <ValidationMessage For="(()=> config.TiempoDesconectado)" style="color:red;" />
                     </div>
