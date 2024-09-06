@@ -1,7 +1,7 @@
 Set objShell = CreateObject("Shell.Application")
 
 ' Ruta del archivo .exe
-exePath = "C:\Program Files (x86)\DCM\DCMSCAM\BlazorApp1.Server.exe"
+exePath = "C:\Program Files (x86)\DCM\DCMSIM\BlazorApp1.Server.exe"
 
 ' Crear objeto para la aplicación ShellExecute
 Set objApp = CreateObject("Shell.Application")

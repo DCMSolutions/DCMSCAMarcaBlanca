@@ -164,7 +164,7 @@
 
         _hubConnection.On<string>("COMChanges", (string a) =>
         {
-            Console.WriteLine(a);
+            
         });
 
         await _hubConnection.StartAsync();

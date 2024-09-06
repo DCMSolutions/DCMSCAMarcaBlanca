@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Client", "Blazor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Shared", "BlazorApp1\Shared\BlazorApp1.Shared.csproj", "{910A4217-4155-4095-8AE3-E57A39288176}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DCMSCAM", "DCMSCAM\DCMSCAM.vdproj", "{5BC3D699-DE94-4017-811B-4959054E1909}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,8 +27,6 @@ Global
 		{910A4217-4155-4095-8AE3-E57A39288176}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{910A4217-4155-4095-8AE3-E57A39288176}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{910A4217-4155-4095-8AE3-E57A39288176}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5BC3D699-DE94-4017-811B-4959054E1909}.Debug|Any CPU.ActiveCfg = Debug
-		{5BC3D699-DE94-4017-811B-4959054E1909}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
